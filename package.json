@@ -1,0 +1,24 @@
+{
+  "name": "employee_tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meta-byte/employee_tracker.git"
+  },
+  "author": "meta-byte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meta-byte/employee_tracker/issues"
+  },
+  "homepage": "https://github.com/meta-byte/employee_tracker#readme",
+  "dependencies": {
+    "figlet": "^1.2.4",
+    "inquirer": "^7.0.4",
+    "mysql": "^2.18.1"
+  }
+}
