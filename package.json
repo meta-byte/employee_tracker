@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/meta-byte/employee_tracker#readme",
   "dependencies": {
+    "console.table": "^0.10.0",
     "figlet": "^1.2.4",
     "inquirer": "^7.0.4",
     "mysql": "^2.18.1"
