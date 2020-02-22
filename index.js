@@ -50,8 +50,8 @@ function start() {
             "View All Employees",
             "View Departments",
             "Change Employee Role",
+            "Delete Employee",
             "Exit",
-
         ]
 
 
@@ -80,6 +80,10 @@ function start() {
 
                 case "Change Employee Role":
                     updateRole()
+                    break;
+
+                case "Delete Employee":
+                    deleteEmployee()
                     break;
 
                 case "Exit":
@@ -190,7 +194,6 @@ function addEmployee() {
         })
 }
 
-
 function addDepartment() {
     inquirer
         .prompt({
@@ -206,7 +209,6 @@ function addDepartment() {
             })
         })
 }
-
 
 function addRole() {
     departments = []
@@ -255,8 +257,109 @@ function addRole() {
         })
 }
 
+function updateRole() {
+    var query = "SELECT employee.id, first_name, last_name, title FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+
+        var employees = [];
+        var employeeId = "";
+        var newRole = ""
+
+        for (let i = 0; i < res.length; i++) {
+            employees.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " | " + res[i].title);
+        }
+
+        inquirer
+            .prompt({
+                name: "employee",
+                type: "list",
+                message: "Which Employee would You Like To Update?",
+                choices: employees
+            })
+            .then(function (answer) {
+                let oldId = answer.employee.split(" ");
+                employeeId = oldId[0];
+
+                connection.query("SELECT * from role;", function (err, res) {
+                    if (err) throw err;
+                    var rolesList = [];
+
+                    for (let i = 0; i < res.length; i++) {
+                        rolesList.push(res[i].id + " " + res[i].title);
+                    }
+
+                    inquirer
+                        .prompt({
+                            name: "newRole",
+                            type: "list",
+                            message: "Please select a new role?",
+                            choices: rolesList
+                        }).then(function (answer) {
+
+                            newRole = answer.newRole.split(" ");
+                            var query = "UPDATE employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id SET role_id = ? WHERE employee.id = ?;"
+
+                            connection.query(query, [newRole[0], employeeId], function (err, res) {
+                                if (err) throw err;
+                                console.log("Role has been changed to " + newRole[1] + " " + newRole[2]);
+
+                                moreActions();
+                            });
+                        });
+                })
+            })
+    })
+};
+
+function deleteEmployee() {
+    var employees = [];
+    var employeeId = "";
+    var query = "SELECT employee.id, first_name, last_name, title FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id"
+
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+
+        for (let i = 0; i < res.length; i++) {
+            employees.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " | " + res[i].title);
+        }
+
+        inquirer
+            .prompt({
+                name: "employee",
+                type: "list",
+                message: "Which Employee would You Like To Remove?",
+                choices: employees
+            })
+            .then(function (answer) {
+                let oldId = answer.employee.split(" ");
+                employeeId = oldId[0];
+                var query = "DELETE FROM employee WHERE id = ?;"
+
+                connection.query(query, [employeeId], function (err, res) {
+                    if (err) throw err;
+                    console.log(answer.employee + " has been deleted.");
+
+                    moreActions();
+                });
+            });
+
+    })
+};
+
+
+
 function viewEmployees() {
     connection.query("SELECT * FROM employee;", function (err, res) {
+        if (err) throw err
+        console.table(res)
+        moreActions()
+    })
+}
+
+function viewDepartments() {
+    connection.query("SELECT * FROM department;", function (err, res) {
         if (err) throw err
         console.table(res)
         moreActions()
