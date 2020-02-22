@@ -117,7 +117,15 @@ function addEmployee() {
                 message: "Would you like to add a Manager to this Employee?"
             })
                 .then(function (res) {
-                    if (res.addManager = true) {
+                    if (res.addManager != true) {
+                        connection.query("INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?);", [response.firstName, response.lastName, roleID], function (err, res) {
+                            if (err) throw err;
+
+                            console.log(response.firstName + " " + response.lastName + " has been added!")
+                        })
+                    }
+
+                    else {
                         inquirer.prompt(
                             {
                                 name: "manager",
@@ -143,13 +151,7 @@ function addEmployee() {
 
                             })
                     }
-                    else {
-                        connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?);", [response.firstName, response.lastName, roleID], function (err, res) {
-                            if (err) throw err;
-
-                            console.log(response.firstName + " " + response.lastName + " has been added!")
-                        })
-                    }
                 })
         })
 }
+
