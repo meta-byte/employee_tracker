@@ -18,11 +18,13 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId);
-    start();
-});
+    titleText.then(start())
+})
+
 
 function start() {
+    console.log("\n")
+
     inquirer.prompt({
         type: "list",
         message: "What action would you like perform?",
@@ -62,6 +64,20 @@ function start() {
             }
         })
 }
+
+const titleText = new Promise(function (resolve, reject) {
+    figlet('Employee Tracker', function (err, data) {
+        if (err) {
+            console.log('Something went wrong...');
+            console.dir(err);
+            return;
+        }
+        console.log(data)
+    })
+    console.log("\n")
+})
+
+
 
 function addEmployee() {
     const roles = []
